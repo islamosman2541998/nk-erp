@@ -1,30 +1,55 @@
+@php
+    $settings = app(\App\Services\SettingService::class);
+
+    $systemName = $settings->get('system_name', 'NK ERP');
+    $companyName = $settings->get('company_name', 'نابت وخليفة');
+    $companyLogo = $settings->get('company_logo');
+
+    $primaryColor = $settings->get('primary_color', '#073f22');
+    $sidebarColor = $settings->get('sidebar_color', '#052f19');
+    $accentColor = $settings->get('accent_color', '#c89b3c');
+    $backgroundColor = $settings->get('background_color', '#f5f7f3');
+@endphp
+
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<html lang="ar"
+      dir="rtl"
+      style="
+        --nk-green: {{ $primaryColor }};
+        --nk-green-dark: {{ $sidebarColor }};
+        --nk-green-light: {{ $primaryColor }};
+        --nk-gold: {{ $accentColor }};
+        --nk-bg: {{ $backgroundColor }};
+      ">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ $systemName }}</title>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-                </a>
+<body class="nk-auth-body">
+    <main class="nk-auth-page">
+        <div class="nk-auth-card">
+            <div class="nk-auth-brand">
+                @if($companyLogo)
+                    <img src="{{ asset('storage/' . $companyLogo) }}"
+                         alt="{{ $companyName }}"
+                         class="nk-auth-logo">
+                @else
+                    <div class="nk-auth-logo-placeholder">
+                        NK
+                    </div>
+                @endif
+
+                <h1>{{ $companyName }}</h1>
+                <p>{{ $systemName }}</p>
             </div>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
-                {{ $slot }}
-            </div>
+            {{ $slot }}
         </div>
-    </body>
+    </main>
+</body>
 </html>
