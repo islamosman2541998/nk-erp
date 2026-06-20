@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class TransactionType extends Model
 {
+    use LogsActivity;
     protected $fillable = [
         'parent_id',
         'name',
@@ -34,6 +37,20 @@ class TransactionType extends Model
     {
         return $this->hasMany(TransactionTypeDocumentRequirement::class);
     }
+ public function getActivitylogOptions(): LogOptions
+{
+    return LogOptions::defaults()
+        ->useLogName('transaction_types')
+        ->logFillable()
+        ->logOnlyDirty()
+        ->dontSubmitEmptyLogs()
+        ->setDescriptionForEvent(fn (string $eventName) => match ($eventName) {
+            'created' => 'تم إنشاء نوع معاملة',
+            'updated' => 'تم تعديل نوع معاملة',
+            'deleted' => 'تم حذف نوع معاملة',
+            default => $eventName,
+        });
+}
 
     public function transactions(): HasMany
     {

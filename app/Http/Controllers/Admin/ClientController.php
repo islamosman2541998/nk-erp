@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Client;
-use App\Services\ClientService;
+use App\Exports\ArrayExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreClientRequest;
 use App\Http\Requests\Admin\UpdateClientRequest;
+use App\Models\Client;
+use App\Services\ClientService;
 use Illuminate\Http\Request;
-use App\Exports\ArrayExport;
 use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class ClientController extends Controller
 {
@@ -21,19 +22,7 @@ class ClientController extends Controller
     {
         abort_unless(auth()->user()->can('view clients'), 403);
 
-        $clients = Client::query()
-            ->when($request->filled('search'), function ($query) use ($request) {
-                $search = trim($request->search);
-
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('facility_name', 'like', "%{$search}%")
-                        ->orWhere('commercial_registration_number', 'like', "%{$search}%")
-                        ->orWhere('tax_number', 'like', "%{$search}%")
-                        ->orWhere('phone', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
-                });
-            })
+        $clients = $this->clientsQuery($request)
             ->latest()
             ->paginate(10)
             ->withQueryString();
@@ -50,6 +39,8 @@ class ClientController extends Controller
 
     public function store(StoreClientRequest $request)
     {
+        abort_unless(auth()->user()->can('create clients'), 403);
+
         $client = $this->clientService->create($request->validated());
 
         return redirect()
@@ -81,6 +72,8 @@ class ClientController extends Controller
 
     public function update(UpdateClientRequest $request, Client $client)
     {
+        abort_unless(auth()->user()->can('edit clients'), 403);
+
         $this->clientService->update($client, $request->validated());
 
         return redirect()
@@ -98,23 +91,12 @@ class ClientController extends Controller
             ->route('admin.clients.index')
             ->with('success', 'تم حذف العميل بنجاح');
     }
+
     public function export(Request $request)
     {
         abort_unless(auth()->user()->can('view clients'), 403);
 
-        $clients = Client::query()
-            ->when($request->filled('search'), function ($query) use ($request) {
-                $search = trim($request->search);
-
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('facility_name', 'like', "%{$search}%")
-                        ->orWhere('commercial_registration_number', 'like', "%{$search}%")
-                        ->orWhere('tax_number', 'like', "%{$search}%")
-                        ->orWhere('phone', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
-                });
-            })
+        $clients = $this->clientsQuery($request)
             ->latest()
             ->get();
 
@@ -156,13 +138,30 @@ class ClientController extends Controller
                 $rows,
                 'العملاء',
                 [
-                    'C' => \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT,
-                    'D' => \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT,
-                    'E' => \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT,
-                    'H' => \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT,
+                    'C' => NumberFormat::FORMAT_TEXT,
+                    'D' => NumberFormat::FORMAT_TEXT,
+                    'E' => NumberFormat::FORMAT_TEXT,
+                    'H' => NumberFormat::FORMAT_TEXT,
                 ]
             ),
             'clients-' . now()->format('Y-m-d') . '.xlsx'
         );
+    }
+
+    private function clientsQuery(Request $request)
+    {
+        return Client::query()
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = trim($request->search);
+
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('facility_name', 'like', "%{$search}%")
+                        ->orWhere('commercial_registration_number', 'like', "%{$search}%")
+                        ->orWhere('tax_number', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            });
     }
 }

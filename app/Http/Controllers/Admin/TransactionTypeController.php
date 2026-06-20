@@ -11,6 +11,8 @@ class TransactionTypeController extends Controller
 {
     public function index()
     {
+        abort_unless(auth()->user()->can('view transaction types'), 403);
+
         $transactionTypes = TransactionType::query()
             ->with(['documentRequirements' => function ($query) {
                 $query->orderBy('sort_order');
@@ -24,6 +26,8 @@ class TransactionTypeController extends Controller
 
     public function create()
     {
+        abort_unless(auth()->user()->can('create transaction types'), 403);
+
         $parentTypes = TransactionType::query()
             ->whereNull('parent_id')
             ->orderBy('sort_order')
@@ -34,6 +38,8 @@ class TransactionTypeController extends Controller
 
     public function store(Request $request)
     {
+        abort_unless(auth()->user()->can('create transaction types'), 403);
+
         $data = $request->validate([
             'parent_id' => ['nullable', 'exists:transaction_types,id'],
             'name' => ['required', 'string', 'max:255', 'unique:transaction_types,name'],
@@ -57,6 +63,8 @@ class TransactionTypeController extends Controller
 
     public function edit(TransactionType $transactionType)
     {
+        abort_unless(auth()->user()->can('edit transaction types'), 403);
+
         $transactionType->load(['documentRequirements' => function ($query) {
             $query->orderBy('sort_order');
         }]);
@@ -72,6 +80,8 @@ class TransactionTypeController extends Controller
 
     public function update(Request $request, TransactionType $transactionType)
     {
+        abort_unless(auth()->user()->can('edit transaction types'), 403);
+
         $data = $request->validate([
             'parent_id' => ['nullable', 'exists:transaction_types,id'],
             'name' => [
@@ -100,6 +110,8 @@ class TransactionTypeController extends Controller
 
     public function destroy(TransactionType $transactionType)
     {
+        abort_unless(auth()->user()->can('delete transaction types'), 403);
+
         if ($transactionType->transactions()->exists() || $transactionType->children()->exists()) {
             $transactionType->update([
                 'is_active' => false,

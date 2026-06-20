@@ -2,17 +2,29 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Transaction;
-use App\Http\Requests\Admin\BulkUpdateTransactionDocumentsRequest;
-use App\Models\TransactionDocument;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\UpdateTransactionDocumentRequest;
-use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\Admin\BulkUpdateTransactionDocumentsRequest;
 use App\Http\Requests\Admin\StoreTransactionDocumentRequest;
+use App\Http\Requests\Admin\UpdateTransactionDocumentRequest;
+use App\Models\Transaction;
+use App\Models\TransactionDocument;
+use Illuminate\Support\Facades\Storage;
+
 class TransactionDocumentController extends Controller
 {
     public function update(UpdateTransactionDocumentRequest $request, TransactionDocument $transactionDocument)
     {
+        $transactionDocument->load('transaction');
+
+        abort_unless(
+            (
+                auth()->user()->can('upload attachments') ||
+                auth()->user()->can('review attachments')
+            ) &&
+            $this->userCanAccessTransaction($transactionDocument->transaction),
+            403
+        );
+
         $data = $request->validated();
 
         if ($request->hasFile('file')) {
@@ -28,12 +40,12 @@ class TransactionDocumentController extends Controller
             $data['uploaded_by'] = auth()->id();
             $data['uploaded_at'] = now();
 
-            if ($data['status'] === 'ناقص') {
+            if (($data['status'] ?? 'ناقص') === 'ناقص') {
                 $data['status'] = 'تم الرفع';
             }
         }
 
-        if (in_array($data['status'], ['مرفوض', 'تمت المراجعة', 'معتمد'])) {
+        if (isset($data['status']) && in_array($data['status'], ['مرفوض', 'تمت المراجعة', 'معتمد'])) {
             $data['reviewed_by'] = auth()->id();
             $data['reviewed_at'] = now();
         }
@@ -42,16 +54,28 @@ class TransactionDocumentController extends Controller
 
         return back()->with('success', 'تم تحديث المستند بنجاح');
     }
+
     public function bulkUpdate(BulkUpdateTransactionDocumentsRequest $request, Transaction $transaction)
     {
-        foreach ($request->validated('documents') as $documentId => $documentData) {
-            $document = $transaction->documents()->whereKey($documentId)->first();
+        abort_unless(
+            (
+                auth()->user()->can('upload attachments') ||
+                auth()->user()->can('review attachments')
+            ) &&
+            $this->userCanAccessTransaction($transaction),
+            403
+        );
 
-            if (! $document) {
+        foreach ($request->validated('documents') as $documentId => $documentData) {
+            $document = $transaction->documents()
+                ->whereKey($documentId)
+                ->first();
+
+            if (!$document) {
                 continue;
             }
 
-            if (! empty($documentData['clear_file'])) {
+            if (!empty($documentData['clear_file'])) {
                 if ($document->file_path) {
                     Storage::disk('public')->delete($document->file_path);
                 }
@@ -86,7 +110,7 @@ class TransactionDocumentController extends Controller
                 $data['uploaded_by'] = auth()->id();
                 $data['uploaded_at'] = now();
 
-                if ($data['status'] === 'ناقص') {
+                if (($data['status'] ?? 'ناقص') === 'ناقص') {
                     $data['status'] = 'تم الرفع';
                 }
             }
@@ -101,33 +125,60 @@ class TransactionDocumentController extends Controller
 
         return back()->with('success', 'تم حفظ تحديثات المستندات بنجاح');
     }
+
     public function store(StoreTransactionDocumentRequest $request, Transaction $transaction)
-{
-    $data = $request->validated();
-
-    $documentData = [
-        'name' => $data['name'],
-        'status' => $data['status'] ?? 'ناقص',
-        'drive_link' => $data['drive_link'] ?? null,
-        'notes' => $data['notes'] ?? null,
-    ];
-
-    if ($request->hasFile('file')) {
-        $documentData['file_path'] = $request->file('file')->store(
-            'transactions/' . $transaction->id . '/documents',
-            'public'
+    {
+        abort_unless(
+            auth()->user()->can('upload attachments') &&
+            $this->userCanAccessTransaction($transaction),
+            403
         );
 
-        $documentData['uploaded_by'] = auth()->id();
-        $documentData['uploaded_at'] = now();
+        $data = $request->validated();
 
-        if (($documentData['status'] ?? 'ناقص') === 'ناقص') {
-            $documentData['status'] = 'تم الرفع';
+        $documentData = [
+            'name' => $data['name'],
+            'status' => $data['status'] ?? 'ناقص',
+            'drive_link' => $data['drive_link'] ?? null,
+            'notes' => $data['notes'] ?? null,
+        ];
+
+        if ($request->hasFile('file')) {
+            $documentData['file_path'] = $request->file('file')->store(
+                'transactions/' . $transaction->id . '/documents',
+                'public'
+            );
+
+            $documentData['uploaded_by'] = auth()->id();
+            $documentData['uploaded_at'] = now();
+
+            if (($documentData['status'] ?? 'ناقص') === 'ناقص') {
+                $documentData['status'] = 'تم الرفع';
+            }
         }
+
+        $transaction->documents()->create($documentData);
+
+        return back()->with('success', 'تم إضافة المستند بنجاح');
     }
 
-    $transaction->documents()->create($documentData);
+    private function userCanAccessTransaction(Transaction $transaction): bool
+    {
+        $user = auth()->user();
 
-    return back()->with('success', 'تم إضافة المستند بنجاح');
-}
+        if ($user->can('view transactions')) {
+            return true;
+        }
+
+        if (!$user->can('view assigned transactions')) {
+            return false;
+        }
+
+        return in_array($user->id, [
+            $transaction->assigned_to,
+            $transaction->technical_manager_id,
+            $transaction->coordinator_id,
+            $transaction->financial_user_id,
+        ]);
+    }
 }

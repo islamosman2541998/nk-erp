@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Client extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes  , LogsActivity;
 
     protected $fillable = [
         'name',
@@ -32,4 +34,18 @@ class Client extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+   public function getActivitylogOptions(): LogOptions
+{
+    return LogOptions::defaults()
+        ->useLogName('clients')
+        ->logFillable()
+        ->logOnlyDirty()
+        ->dontSubmitEmptyLogs()
+        ->setDescriptionForEvent(fn (string $eventName) => match ($eventName) {
+            'created' => 'تم إنشاء العميل',
+            'updated' => 'تم تعديل العميل',
+            'deleted' => 'تم حذف العميل',
+            default => $eventName,
+        });
+}
 }

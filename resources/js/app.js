@@ -2,7 +2,8 @@ import './bootstrap';
 
 import * as bootstrap from 'bootstrap';
 window.bootstrap = bootstrap;
-
+import ApexCharts from 'apexcharts';
+window.ApexCharts = ApexCharts;
 import toastr from 'toastr';
 import Swal from 'sweetalert2';
 

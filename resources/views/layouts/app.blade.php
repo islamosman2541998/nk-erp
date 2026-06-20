@@ -38,6 +38,8 @@
     </div>
 
     @include('layouts.partials.scripts')
+@stack('scripts')
 </body>
+
 
 </html>

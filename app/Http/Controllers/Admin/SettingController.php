@@ -9,22 +9,23 @@ use Illuminate\Http\Request;
 
 class SettingController extends Controller
 {
-   public function edit()
-{
-    abort_unless(auth()->user()->can('edit settings'), 403);
+    public function edit()
+    {
+        abort_unless(auth()->user()->can('edit settings'), 403);
 
-    $settings = Setting::query()
-        ->orderBy('group_name')
-        ->orderBy('sort_order')
-        ->get()
-        ->groupBy('group_name');
+        $settings = Setting::query()
+            ->orderBy('group_name')
+            ->orderBy('sort_order')
+            ->get()
+            ->groupBy('group_name');
 
-    return view('admin.settings.edit', compact('settings'));
-}
+        return view('admin.settings.edit', compact('settings'));
+    }
 
-   public function update(Request $request, SettingService $settingService)
-{
-    abort_unless(auth()->user()->can('edit settings'), 403);
+    public function update(Request $request, SettingService $settingService)
+    {
+        abort_unless(auth()->user()->can('edit settings'), 403);
+
         $data = $request->validate([
             'system_name' => ['nullable', 'string', 'max:255'],
             'company_name' => ['nullable', 'string', 'max:255'],
@@ -53,6 +54,7 @@ class SettingController extends Controller
             'sidebar_color' => ['nullable', 'string', 'max:20'],
             'accent_color' => ['nullable', 'string', 'max:20'],
             'background_color' => ['nullable', 'string', 'max:20'],
+
             'remove_company_logo' => ['nullable', 'boolean'],
         ]);
 

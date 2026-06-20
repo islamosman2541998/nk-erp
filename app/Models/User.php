@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, HasRoles,  Notifiable;
+    use HasFactory, HasRoles,  Notifiable , LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -47,4 +49,21 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function getActivitylogOptions(): LogOptions
+{
+    return LogOptions::defaults()
+        ->useLogName('users')
+        ->logOnly([
+            'name',
+            'email',
+        ])
+        ->logOnlyDirty()
+        ->dontSubmitEmptyLogs()
+        ->setDescriptionForEvent(fn (string $eventName) => match ($eventName) {
+            'created' => 'تم إنشاء مستخدم',
+            'updated' => 'تم تعديل مستخدم',
+            'deleted' => 'تم حذف مستخدم',
+            default => $eventName,
+        });
+}
 }

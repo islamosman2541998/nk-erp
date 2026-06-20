@@ -6,10 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Transaction extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes  , LogsActivity;
 
     protected $fillable = [
         'reference_number',
@@ -87,16 +90,44 @@ class Transaction extends Model
     {
         return $this->hasMany(TransactionDocument::class);
     }
+   public function getActivitylogOptions(): LogOptions
+{
+    return LogOptions::defaults()
+        ->useLogName('transactions')
+        ->logFillable()
+        ->logOnlyDirty()
+        ->dontSubmitEmptyLogs()
+        ->setDescriptionForEvent(fn (string $eventName) => match ($eventName) {
+            'created' => 'تم إنشاء المعاملة',
+            'updated' => 'تم تعديل المعاملة',
+            'deleted' => 'تم حذف المعاملة',
+            default => $eventName,
+        });
+}
+    public function contract(): HasOne
+{
+    return $this->hasOne(Contract::class);
+}
+public function payments(): HasMany
+{
+    return $this->hasMany(Payment::class);
+}
     public function archivedBy(): BelongsTo
 {
     return $this->belongsTo(User::class, 'archived_by');
 }
-
+public function expenses(): HasMany
+{
+    return $this->hasMany(Expense::class);
+}
 public function scopeActive($query)
 {
     return $query->whereNull('archived_at');
 }
-
+public function commissions(): HasMany
+{
+    return $this->hasMany(Commission::class);
+}
 public function scopeArchived($query)
 {
     return $query->whereNotNull('archived_at');

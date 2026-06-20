@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class TransactionDocument extends Model
 {
+    use LogsActivity;
     protected $fillable = [
         'transaction_id',
         'document_requirement_id',
@@ -45,4 +48,18 @@ class TransactionDocument extends Model
     {
         return $this->belongsTo(User::class, 'reviewed_by');
     }
+    public function getActivitylogOptions(): LogOptions
+{
+    return LogOptions::defaults()
+        ->useLogName('transaction_documents')
+        ->logFillable()
+        ->logOnlyDirty()
+        ->dontSubmitEmptyLogs()
+        ->setDescriptionForEvent(fn (string $eventName) => match ($eventName) {
+            'created' => 'تم إنشاء مستند معاملة',
+            'updated' => 'تم تعديل مستند معاملة',
+            'deleted' => 'تم حذف مستند معاملة',
+            default => $eventName,
+        });
+}
 }

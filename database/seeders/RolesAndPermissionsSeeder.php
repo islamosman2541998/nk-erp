@@ -5,30 +5,33 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\PermissionRegistrar;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
-  public function run(): void
-{
-    app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+    public function run(): void
+    {
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-    $permissions = [
-        // Dashboard
-        'view dashboard',
+        $permissions = [
+            // Dashboard
+            'view dashboard',
 
-            // Users & Permissions
-            'view users',
-            'create users',
-            'edit users',
-            'delete users',
+            // Users & Roles
+            'manage users',
             'manage roles',
-            'manage permissions',
 
             // Clients
             'view clients',
             'create clients',
             'edit clients',
             'delete clients',
+
+            // Transaction Types
+            'view transaction types',
+            'create transaction types',
+            'edit transaction types',
+            'delete transaction types',
 
             // Transactions
             'view transactions',
@@ -39,18 +42,15 @@ class RolesAndPermissionsSeeder extends Seeder
             'close transactions',
             'change transaction status',
 
-            // Transaction Documents & Attachments
+            // Attachments / Documents
             'view attachments',
             'upload attachments',
             'review attachments',
             'delete attachments',
 
-            // Meetings & Team
-            'view meetings',
-            'create meetings',
-            'edit meetings',
-            'delete meetings',
-            'manage transaction team',
+            // Archive
+            'view archive',
+            'restore archive',
 
             // Contracts
             'view contracts',
@@ -58,7 +58,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'edit contracts',
             'delete contracts',
 
-            // Payments / Revenue
+            // Payments
             'view payments',
             'create payments',
             'edit payments',
@@ -69,113 +69,187 @@ class RolesAndPermissionsSeeder extends Seeder
             'create expenses',
             'edit expenses',
             'delete expenses',
-            'approve expenses',
 
             // Commissions
             'view commissions',
             'create commissions',
             'edit commissions',
-            'approve commissions',
-            'pay commissions',
+            'delete commissions',
 
-            // Reports
+            // Reports / Logs
             'view reports',
-            'export reports',
-
-            // Audit Log
             'view audit logs',
 
             // Settings
-            'view settings',
             'edit settings',
         ];
 
         foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission]);
+            Permission::findOrCreate($permission, 'web');
         }
 
-        $ceo = Role::firstOrCreate(['name' => 'CEO']);
-        $technicalManager = Role::firstOrCreate(['name' => 'Technical Manager']);
-        $technicalEmployee = Role::firstOrCreate(['name' => 'Technical Employee']);
-        $financialManager = Role::firstOrCreate(['name' => 'Financial Manager']);
-        $coordinator = Role::firstOrCreate(['name' => 'Coordinator']);
-        $limitedEmployee = Role::firstOrCreate(['name' => 'Limited Employee']);
+        $roles = [
+            'CEO',
+            'Technical Manager',
+            'Technical Employee',
+            'Financial Manager',
+            'Coordinator',
+            'Limited Employee',
+        ];
 
-        // CEO بياخد كل الصلاحيات
-        $ceo->syncPermissions(Permission::all());
+        foreach ($roles as $role) {
+            Role::findOrCreate($role, 'web');
+        }
 
-        $technicalManager->syncPermissions([
-            'view dashboard',
-            'view clients',
-            'view transactions',
-            'create transactions',
-            'edit transactions',
-            'change transaction status',
-            'view attachments',
-            'upload attachments',
-            'review attachments',
-            'view meetings',
-            'create meetings',
-            'edit meetings',
-            'manage transaction team',
-            'view reports',
-        ]);
+        /*
+        |--------------------------------------------------------------------------
+        | CEO - المدير العام
+        |--------------------------------------------------------------------------
+        | كل الصلاحيات
+        */
+        Role::findByName('CEO', 'web')
+            ->syncPermissions(Permission::all());
 
-        $technicalEmployee->syncPermissions([
-            'view dashboard',
-            'view clients',
-            'view assigned transactions',
-            'edit transactions',
-            'view attachments',
-            'upload attachments',
-            'view meetings',
-            'create meetings',
-        ]);
+        /*
+        |--------------------------------------------------------------------------
+        | Technical Manager - المدير الفني
+        |--------------------------------------------------------------------------
+        | يرى كل المعاملات الفنية، يراجع المستندات، يغير الحالة، ويغلق المعاملة.
+        | لا نعطيه صلاحيات الماليات إلا عرض العقد فقط لو محتاج يعرف سياق المعاملة.
+        */
+        Role::findByName('Technical Manager', 'web')
+            ->syncPermissions([
+                'view dashboard',
 
-        $financialManager->syncPermissions([
-            'view dashboard',
-            'view clients',
-            'view transactions',
-            'view contracts',
-            'create contracts',
-            'edit contracts',
-            'view payments',
-            'create payments',
-            'edit payments',
-            'view expenses',
-            'create expenses',
-            'edit expenses',
-            'approve expenses',
-            'view commissions',
-            'approve commissions',
-            'pay commissions',
-            'view reports',
-            'export reports',
-        ]);
+                'view clients',
 
-        $coordinator->syncPermissions([
-            'view dashboard',
-            'view clients',
-            'create clients',
-            'edit clients',
-            'view transactions',
-            'create transactions',
-            'edit transactions',
-            'change transaction status',
-            'view attachments',
-            'upload attachments',
-            'view meetings',
-            'create meetings',
-            'edit meetings',
-            'manage transaction team',
-        ]);
+                'view transaction types',
 
-        $limitedEmployee->syncPermissions([
-            'view dashboard',
-            'view assigned transactions',
-            'view attachments',
-            'upload attachments',
-            'view meetings',
-        ]);
+                'view transactions',
+                'create transactions',
+                'edit transactions',
+                'close transactions',
+                'change transaction status',
+
+                'view attachments',
+                'upload attachments',
+                'review attachments',
+                'delete attachments',
+
+                'view archive',
+                'restore archive',
+
+                'view contracts',
+
+                'view reports',
+            ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Technical Employee - الموظف الفني
+        |--------------------------------------------------------------------------
+        | يرى المعاملات المسندة له فقط، ويرفع مستندات.
+        | لا يرى الماليات ولا كل المعاملات.
+        */
+        Role::findByName('Technical Employee', 'web')
+            ->syncPermissions([
+                'view dashboard',
+
+                'view clients',
+
+                'view assigned transactions',
+
+                'view attachments',
+                'upload attachments',
+            ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Financial Manager - المدير المالي
+        |--------------------------------------------------------------------------
+        | يرى المعاملات والماليات: عقود، دفعات، مصروفات، عمولات، تقارير.
+        */
+        Role::findByName('Financial Manager', 'web')
+            ->syncPermissions([
+                'view dashboard',
+
+                'view clients',
+
+                'view transactions',
+
+                'view contracts',
+                'create contracts',
+                'edit contracts',
+                'delete contracts',
+
+                'view payments',
+                'create payments',
+                'edit payments',
+                'delete payments',
+
+                'view expenses',
+                'create expenses',
+                'edit expenses',
+                'delete expenses',
+
+                'view commissions',
+                'create commissions',
+                'edit commissions',
+                'delete commissions',
+
+                'view attachments',
+
+                'view archive',
+
+                'view reports',
+            ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Coordinator - المنسق
+        |--------------------------------------------------------------------------
+        | ينشئ العملاء والمعاملات، يرفع المستندات، ويتابع التنفيذ.
+        | لا يدير الماليات بالكامل.
+        */
+        Role::findByName('Coordinator', 'web')
+            ->syncPermissions([
+                'view dashboard',
+
+                'view clients',
+                'create clients',
+                'edit clients',
+
+                'view transaction types',
+
+                'view transactions',
+                'create transactions',
+                'edit transactions',
+                'change transaction status',
+
+                'view attachments',
+                'upload attachments',
+
+                'view contracts',
+
+                'view archive',
+            ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Limited Employee - موظف محدود
+        |--------------------------------------------------------------------------
+        | أقل صلاحيات: يرى المعاملات المسندة فقط ويرفع مستندات.
+        */
+        Role::findByName('Limited Employee', 'web')
+            ->syncPermissions([
+                'view dashboard',
+
+                'view assigned transactions',
+
+                'view attachments',
+                'upload attachments',
+            ]);
+
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
 }

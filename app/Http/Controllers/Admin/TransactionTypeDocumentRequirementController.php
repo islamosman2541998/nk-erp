@@ -11,6 +11,8 @@ class TransactionTypeDocumentRequirementController extends Controller
 {
     public function store(Request $request, TransactionType $transactionType)
     {
+        abort_unless(auth()->user()->can('edit transaction types'), 403);
+
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
@@ -32,6 +34,8 @@ class TransactionTypeDocumentRequirementController extends Controller
 
     public function update(Request $request, TransactionTypeDocumentRequirement $documentRequirement)
     {
+        abort_unless(auth()->user()->can('edit transaction types'), 403);
+
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
@@ -53,6 +57,8 @@ class TransactionTypeDocumentRequirementController extends Controller
 
     public function destroy(TransactionTypeDocumentRequirement $documentRequirement)
     {
+        abort_unless(auth()->user()->can('delete transaction types'), 403);
+
         $documentRequirement->delete();
 
         return back()->with('success', 'تم حذف المستند بنجاح');
