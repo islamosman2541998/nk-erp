@@ -10,7 +10,7 @@ use App\Http\Controllers\Admin\TransactionTypeDocumentRequirementController;
 use App\Http\Controllers\Admin\SettingController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 Route::get('/dashboard', function () {
