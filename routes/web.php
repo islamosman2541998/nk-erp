@@ -10,11 +10,11 @@ use App\Http\Controllers\Admin\TransactionTypeDocumentRequirementController;
 use App\Http\Controllers\Admin\SettingController;
 
 Route::get('/', function () {
-    return view('auth.login');
+    return redirect()->route('login');
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return redirect()->route('admin.transactions.index');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
