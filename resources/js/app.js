@@ -3,15 +3,15 @@ import './bootstrap';
 import 'bootstrap/dist/css/bootstrap.rtl.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-
-import '../css/app.css';
-
-
+import * as bootstrap from 'bootstrap';
+window.bootstrap = bootstrap;
 
 import toastr from 'toastr';
 import 'toastr/build/toastr.min.css';
 
 import Swal from 'sweetalert2';
+
+import '../css/app.css';
 
 window.toastr = toastr;
 window.Swal = Swal;
