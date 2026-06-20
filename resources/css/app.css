@@ -1,0 +1,710 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --nk-green: #073f22;
+    --nk-green-dark: #052f19;
+    --nk-green-light: #0b5c32;
+    --nk-gold: #c89b3c;
+    --nk-bg: #f5f7f3;
+    --nk-border: #e5e7eb;
+    --nk-text: #111827;
+    --nk-muted: #6b7280;
+    --nk-white: #ffffff;
+    --nk-font-family: 'IBM Plex Sans Arabic', sans-serif;
+    --nk-sidebar-width: 285px;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: var(--nk-font-family);
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    margin: 0;
+    font-family: var(--nk-font-family);
+    background: var(--nk-bg);
+    color: var(--nk-text);
+}
+
+button,
+input,
+select,
+textarea,
+.form-control,
+.form-select,
+.btn,
+.table,
+.dropdown-menu {
+    font-family: var(--nk-font-family);
+}
+
+a {
+    text-decoration: none;
+}
+
+/* =========================
+   Main Layout
+========================= */
+
+.nk-app,
+.nk-layout {
+    min-height: 100vh;
+    display: flex;
+    background: var(--nk-bg);
+}
+
+/* =========================
+   Sidebar
+========================= */
+
+.nk-sidebar {
+    width: var(--nk-sidebar-width);
+    height: 100vh;
+    min-height: 100vh;
+    background: linear-gradient(180deg, var(--nk-green-dark), var(--nk-green));
+    color: var(--nk-white);
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding: 20px 14px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 1000;
+}
+
+/* Old + New brand classes */
+.nk-brand,
+.nk-sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 18px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.nk-brand-logo,
+.nk-logo {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    border-radius: 16px;
+    background: var(--nk-white);
+    color: var(--nk-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    overflow: hidden;
+}
+
+.nk-brand-logo-img {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    border-radius: 16px;
+    object-fit: contain;
+    background: var(--nk-white);
+    padding: 5px;
+}
+
+.nk-brand-title {
+    font-size: 16px;
+    font-weight: 800;
+    margin: 0;
+    color: var(--nk-white);
+    line-height: 1.4;
+}
+
+.nk-brand-subtitle {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.5;
+}
+
+.nk-menu-label {
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 12px;
+    margin: 18px 12px 8px;
+}
+
+.nk-sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.nk-menu-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(255, 255, 255, 0.85);
+    padding: 12px 14px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 4px;
+    transition: 0.2s ease;
+}
+
+.nk-menu-link:hover,
+.nk-menu-link.active {
+    color: var(--nk-white);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.nk-menu-link i {
+    color: var(--nk-gold);
+    font-size: 18px;
+}
+
+/* =========================
+   Main Content Area
+========================= */
+
+.nk-main {
+    width: calc(100% - var(--nk-sidebar-width));
+    margin-right: var(--nk-sidebar-width);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* =========================
+   Topbar / Navbar
+========================= */
+
+.nk-topbar,
+.nk-navbar {
+    height: 72px;
+    min-height: 72px;
+    background: var(--nk-white);
+    border-bottom: 1px solid var(--nk-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 0 24px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.nk-navbar-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--nk-green);
+    line-height: 1.4;
+}
+
+.nk-navbar-subtitle {
+    font-size: 13px;
+    color: var(--nk-muted);
+    margin-top: 2px;
+}
+
+/* =========================
+   Page Content
+========================= */
+
+.nk-page,
+.nk-content {
+    flex: 1;
+    padding: 24px;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.nk-page-title {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--nk-green);
+    margin-bottom: 6px;
+}
+
+.nk-page-subtitle {
+    color: var(--nk-muted);
+    margin-bottom: 0;
+}
+
+/* =========================
+   Cards
+========================= */
+
+.nk-card {
+    background: var(--nk-white);
+    border: 1px solid var(--nk-border);
+    border-radius: 22px;
+    padding: 22px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.035);
+}
+
+.nk-stat-card {
+    background: var(--nk-white);
+    border: 1px solid var(--nk-border);
+    border-radius: 22px;
+    padding: 20px;
+    height: 100%;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.025);
+}
+
+.nk-stat-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 15px;
+    background: color-mix(in srgb, var(--nk-green) 10%, white);
+    color: var(--nk-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+.nk-stat-number {
+    font-size: 30px;
+    font-weight: 900;
+    margin: 10px 0 0;
+}
+
+.nk-stat-label {
+    color: var(--nk-muted);
+    font-size: 13px;
+}
+
+/* =========================
+   Buttons
+========================= */
+
+.nk-btn-main {
+    background: var(--nk-green);
+    color: var(--nk-white);
+    border: 0;
+    border-radius: 999px;
+    padding: 10px 18px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: 0.2s ease;
+}
+
+.nk-btn-main:hover {
+    background: var(--nk-green-light);
+    color: var(--nk-white);
+}
+
+/* Bootstrap Buttons Override */
+.btn-success {
+    background-color: var(--nk-green);
+    border-color: var(--nk-green);
+}
+
+.btn-success:hover {
+    background-color: var(--nk-green-light);
+    border-color: var(--nk-green-light);
+}
+
+.btn-outline-success {
+    color: var(--nk-green);
+    border-color: var(--nk-green);
+}
+
+.btn-outline-success:hover {
+    background-color: var(--nk-green);
+    border-color: var(--nk-green);
+    color: var(--nk-white);
+}
+
+.text-success {
+    color: var(--nk-green) !important;
+}
+
+.bg-success {
+    background-color: var(--nk-green) !important;
+}
+
+.bg-success-subtle {
+    background-color: color-mix(in srgb, var(--nk-green) 12%, white) !important;
+}
+
+.text-warning {
+    color: var(--nk-gold) !important;
+}
+
+.bg-warning-subtle {
+    background-color: color-mix(in srgb, var(--nk-gold) 18%, white) !important;
+}
+
+/* =========================
+   User Box
+========================= */
+
+.nk-user-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nk-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--nk-green);
+    color: var(--nk-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+}
+
+/* =========================
+   Tables
+========================= */
+
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    font-weight: 800;
+    color: var(--nk-text);
+    white-space: nowrap;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+/* =========================
+   Forms
+========================= */
+
+.form-control,
+.form-select {
+    border-radius: 12px;
+    border-color: var(--nk-border);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--nk-green);
+    box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--nk-green) 14%, transparent);
+}
+
+.form-control-color {
+    width: 70px;
+    height: 42px;
+    padding: 4px;
+}
+
+.form-label {
+    font-weight: 700;
+    color: var(--nk-text);
+}
+
+/* =========================
+   Footer
+========================= */
+
+.nk-footer {
+    padding: 16px 24px;
+    background: transparent;
+    color: var(--nk-muted);
+    font-size: 13px;
+    text-align: center;
+}
+
+/* =========================
+   Bootstrap Fixes
+========================= */
+
+.row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.dropdown-menu {
+    text-align: right;
+}
+
+.alert {
+    border: 0;
+}
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 991px) {
+    .nk-app,
+    .nk-layout {
+        display: block;
+    }
+
+    .nk-sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        min-height: auto;
+        border-radius: 0;
+    }
+
+    .nk-main {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .nk-topbar,
+    .nk-navbar {
+        height: auto;
+        min-height: 72px;
+        padding: 14px 18px;
+        flex-wrap: wrap;
+    }
+
+    .nk-page,
+    .nk-content {
+        padding: 18px;
+    }
+
+    .nk-card {
+        padding: 18px;
+    }
+}
+/* =========================
+   Toastr
+========================= */
+
+#toast-container > div,
+.toast {
+    opacity: 1 !important;
+    filter: none !important;
+}
+
+#toast-container > .toast {
+    opacity: 1 !important;
+    border-radius: 16px !important;
+    font-family: var(--nk-font-family) !important;
+    box-shadow: 0 16px 35px rgba(0, 0, 0, 0.18) !important;
+}
+
+#toast-container > .toast:hover {
+    opacity: 1 !important;
+    box-shadow: 0 16px 35px rgba(0, 0, 0, 0.22) !important;
+}
+
+#toast-container > .toast-success {
+    background-color: var(--nk-green) !important;
+    color: #fff !important;
+}
+
+#toast-container > .toast-error {
+    background-color: #c0392b !important;
+    color: #fff !important;
+}
+
+#toast-container > .toast-warning {
+    background-color: #c89b3c !important;
+    color: #fff !important;
+}
+
+#toast-container > .toast-info {
+    background-color: #105666 !important;
+    color: #fff !important;
+}
+
+#toast-container .toast-message {
+    color: #fff !important;
+    font-weight: 700;
+}
+
+#toast-container .toast-title {
+    color: #fff !important;
+    font-weight: 800;
+}
+
+#toast-container .toast-close-button {
+    color: #fff !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+}
+
+/* SweetAlert2 */
+.nk-swal-popup {
+    border-radius: 24px !important;
+    padding: 1.5rem !important;
+    font-family: var(--nk-font-family) !important;
+    direction: rtl !important;
+}
+
+.nk-swal-title {
+    font-weight: 800 !important;
+    color: var(--nk-text) !important;
+}
+
+.nk-swal-text {
+    color: var(--nk-muted) !important;
+    font-size: 15px !important;
+}
+
+.swal2-actions {
+    gap: 10px;
+}
+
+.nk-swal-confirm,
+.nk-swal-cancel {
+    border-radius: 999px !important;
+    padding: 10px 22px !important;
+    font-weight: 700 !important;
+    border: none !important;
+}
+
+.swal2-icon {
+    margin-top: 0.5rem !important;
+}
+
+.nk-settings-logo-preview {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    border: 1px solid var(--nk-border);
+    border-radius: 18px;
+    padding: 10px;
+    background: #fff;
+}
+
+/* =========================
+   Global Professional Buttons
+========================= */
+
+.btn,
+.nk-btn-main {
+    border-radius: 999px !important;
+    font-weight: 700 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    border-width: 1px !important;
+    transition: all 0.18s ease-in-out !important;
+    box-shadow: none !important;
+    white-space: nowrap;
+}
+
+.btn {
+    padding: 9px 18px !important;
+}
+
+.btn-sm {
+    padding: 6px 13px !important;
+    font-size: 13px !important;
+    min-height: 34px;
+}
+
+.btn:hover,
+.nk-btn-main:hover {
+    transform: translateY(-1px);
+}
+
+.btn:active,
+.nk-btn-main:active {
+    transform: translateY(0);
+}
+
+/* Main Button */
+.nk-btn-main,
+.btn-success {
+    background: linear-gradient(135deg, var(--nk-green), var(--nk-green-light)) !important;
+    border-color: var(--nk-green) !important;
+    color: #fff !important;
+    box-shadow: 0 8px 18px rgba(7, 63, 34, 0.18) !important;
+}
+
+.nk-btn-main:hover,
+.btn-success:hover {
+    color: #fff !important;
+    box-shadow: 0 12px 24px rgba(7, 63, 34, 0.24) !important;
+}
+
+/* View Button */
+.btn-outline-success {
+    background: #eef7f0 !important;
+    border-color: #cfe7d5 !important;
+    color: var(--nk-green) !important;
+}
+
+.btn-outline-success:hover {
+    background: var(--nk-green) !important;
+    border-color: var(--nk-green) !important;
+    color: #fff !important;
+    box-shadow: 0 8px 18px rgba(7, 63, 34, 0.18) !important;
+}
+
+/* Edit Button */
+.btn-outline-primary {
+    background: #eef6f7 !important;
+    border-color: #c9e1e5 !important;
+    color: #105666 !important;
+}
+
+.btn-outline-primary:hover {
+    background: #105666 !important;
+    border-color: #105666 !important;
+    color: #fff !important;
+    box-shadow: 0 8px 18px rgba(16, 86, 102, 0.18) !important;
+}
+
+/* Delete / Danger Button */
+.btn-outline-danger {
+    background: #fff1f1 !important;
+    border-color: #fecaca !important;
+    color: #b42318 !important;
+}
+
+.btn-outline-danger:hover {
+    background: #b42318 !important;
+    border-color: #b42318 !important;
+    color: #fff !important;
+    box-shadow: 0 8px 18px rgba(180, 35, 24, 0.18) !important;
+}
+
+/* Secondary Button */
+.btn-outline-secondary {
+    background: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+    color: #475569 !important;
+}
+
+.btn-outline-secondary:hover {
+    background: #475569 !important;
+    border-color: #475569 !important;
+    color: #fff !important;
+    box-shadow: 0 8px 18px rgba(71, 85, 105, 0.18) !important;
+}
+
+/* Excel / Export Button */
+.btn-outline-success .bi-file-earmark-excel {
+    color: inherit;
+}
+
+/* Action buttons inside tables */
+.table .btn-sm {
+    min-width: 64px;
+}
+
+.table td .d-flex {
+    align-items: center;
+}
