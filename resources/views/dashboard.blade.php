@@ -72,7 +72,7 @@
             </div>
 
             @can('create transactions')
-                <a href="#" class="nk-btn-main">
+                <a href="{{ route('admin.transactions.create') }}" class="nk-btn-main">
                     <i class="bi bi-plus-circle"></i>
                     إضافة معاملة
                 </a>
