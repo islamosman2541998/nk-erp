@@ -102,7 +102,7 @@
                             </td>
 
                             <td>
-                                <div class="d-flex gap-2 flex-wrap">
+                                <div class="d-flex align-items-center gap-1 flex-nowrap">
                                     <a href="{{ route('admin.transactions.show', $transaction) }}"
                                         class="btn btn-sm btn-outline-success rounded-pill">
                                         <i class="bi bi-eye"></i>
@@ -112,15 +112,16 @@
                                     @can('close transactions')
                                         <form method="POST"
                                             action="{{ route('admin.transactions.unarchive', $transaction) }}"
-                                            class="js-confirm-form" data-title="إلغاء الأرشفة"
+                                            class="js-confirm-form m-0" data-title="إلغاء الأرشفة"
                                             data-text="هل تريد إعادة هذه المعاملة إلى المعاملات النشطة؟" data-icon="info"
                                             data-confirm-text="نعم، أعدها" data-cancel-text="إلغاء"
                                             data-confirm-color="#0b5c32">
                                             @csrf
                                             @method('PATCH')
 
-                                            <button type="submit" class="btn btn-outline-primary rounded-pill">
-                                                إلغاء الأرشفة
+                                            <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill">
+                                                <i class="bi bi-arrow-counterclockwise"></i>
+                                                إلغاء
                                             </button>
                                         </form>
                                     @endcan
