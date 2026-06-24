@@ -73,28 +73,28 @@
             </a>
         @endcan
 
-        @canany(['view archive', 'view transactions'])
+        {{-- @canany(['view archive', 'view transactions'])
             <a href="{{ route('admin.transactions.archived') }}"
                 class="nk-menu-link {{ request()->routeIs('admin.transactions.archived') ? 'active' : '' }}">
                 <i class="bi bi-archive"></i>
                 الأرشيف
             </a>
-        @endcanany
-        @canany(['view archive', 'view attachments'])
+        @endcanany --}}
+        {{-- @canany(['view archive', 'view attachments'])
             <a href="{{ route('admin.archive.attachments') }}"
                 class="nk-menu-link {{ request()->routeIs('admin.archive.attachments') ? 'active' : '' }}">
                 <i class="bi bi-paperclip"></i>
                 أرشيف المرفقات
             </a>
-        @endcanany
-        @can('view reports')
+        @endcanany --}}
+        {{-- @can('view reports')
             <a href="{{ route('admin.reports.financial') }}"
                 class="nk-menu-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
                 <i class="bi bi-bar-chart-line"></i>
                 التقارير المالية
             </a>
-        @endcan
-        @can('view reports')
+        @endcan --}}
+        {{-- @can('view reports')
             <a href="{{ route('admin.reports.transactions') }}"
                 class="nk-menu-link {{ request()->routeIs('admin.reports.transactions') ? 'active' : '' }}">
                 <i class="bi bi-clipboard-data"></i>
@@ -107,7 +107,7 @@
                 <i class="bi bi-activity"></i>
                 سجل العمليات
             </a>
-        @endcan
+        @endcan --}}
         @can('edit settings')
             <a href="{{ route('admin.settings.edit') }}"
                 class="nk-menu-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">

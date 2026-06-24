@@ -137,11 +137,11 @@
         </div>
 
     </div>
-    @include('admin.transactions.partials.financial-summary-card')
+    {{-- @include('admin.transactions.partials.financial-summary-card') --}}
     @include('admin.transactions.partials.contract-card')
-    @include('admin.transactions.partials.payments-card')
-    @include('admin.transactions.partials.expenses-card')
-    @include('admin.transactions.partials.commissions-card')
+    {{-- @include('admin.transactions.partials.payments-card') --}}
+    {{-- @include('admin.transactions.partials.expenses-card') --}}
+    {{-- @include('admin.transactions.partials.commissions-card') --}}
     <div class="nk-card">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
             <div>
